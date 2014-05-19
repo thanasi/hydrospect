@@ -22,6 +22,14 @@ maximas = []
 minimas = []
 peakTIme = []	# stores the time at which a peak maxima happens (to get pulse)
 
+# next we shall go about band-pass filtering the data and displaying it to see that it is to our satisfaction
+# we start by finding the upper and lower frequency bounds of this data...
+print "upper frequency =", 1/(time[1]-time[0])
+print "lower frequency =", 1/(time[-1]-time[0])
+
+# knowing these, we can start experimenting with a bandpass filter that would be most to our satisfaction..
+
+
 '''
 # now we start looping through all the lines of data till the last but one
 for i in range(0, len(time) - 1):
