@@ -15,16 +15,16 @@ epsilon_H2O = []
 import matplotlib, numpy
 
 fileToRead = 'data.txt'		# later we will add a TkInter dialog box to select data files.
-f = open(fileToRead, 'r')	# open the file in readonly mode
-rawData = f.readlines()
+time, amplitude = numpy.loadtxt(fileToRead, skiprows=3, unpack=True)	# read in the file
 
 # next we declare the holders for peaks
 maximas = []
 minimas = []
 peakTIme = []	# stores the time at which a peak maxima happens (to get pulse)
 
+'''
 # now we start looping through all the lines of data till the last but one
-for i in range(4, len(rawData) - 1):		# assuming there are 3 headerlines
+for i in range(0, len(time) - 1):
   # we'll go ahead and split three rows into columns..
   prevVal = rawData[i-1].split()
   currentVal = rawData[i].split()
@@ -50,3 +50,4 @@ for i in range(4, len(rawData) - 1):		# assuming there are 3 headerlines
 	minimas.append(currentAmpl)
 	
 print len(maximas)
+'''
