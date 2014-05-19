@@ -12,7 +12,7 @@ epsilon_Hb = []
 epsilon_HbO2 = []
 epsilon_H2O = []
 
-import matplotlib, numpy
+import matplotlib.pyplot as plt, numpy, scipy.signal
 
 fileToRead = 'data.txt'		# later we will add a TkInter dialog box to select data files.
 time, amplitude = numpy.loadtxt(fileToRead, skiprows=3, unpack=True)	# read in the file
@@ -24,38 +24,32 @@ peakTIme = []	# stores the time at which a peak maxima happens (to get pulse)
 
 # next we shall go about band-pass filtering the data and displaying it to see that it is to our satisfaction
 # we start by finding the upper and lower frequency bounds of this data...
-print "upper frequency =", 1/(time[1]-time[0])
-print "lower frequency =", 1/(time[-1]-time[0])
+fs = 1/(time[1]-time[0])	# sampling rate
+fnyq = fs/2					# nyquist frequency
+
+# print "sampling frequency =", fs
+# print "lowest frequency =", 1/(time[-1]-time[0])
 
 # knowing these, we can start experimenting with a bandpass filter that would be most to our satisfaction..
+# variables relating to the filter:
+fCutoffHigh = 100	# Hz
+fCutoffLow = 0.5	# Hz
+butterOrder = 1
 
+# filter definition...
+# b, a = scipy.signal.butter(butterOrder, [fCutoffLow/fnyq, fCutoffHigh/fnyq], btype='band', analog=True)
+b, a = scipy.signal.butter(butterOrder, [fCutoffHigh/fnyq])
 
-'''
-# now we start looping through all the lines of data till the last but one
-for i in range(0, len(time) - 1):
-  # we'll go ahead and split three rows into columns..
-  prevVal = rawData[i-1].split()
-  currentVal = rawData[i].split()
-  nextVal = rawData[i+1].split()
-  
-  # thereafter, we put them into their designated variables
-  # first the current time...
-  time = currentVal[0]
-  
-  # then all the amplitudes...
-  prevAmpl = prevVal[1]
-  currentAmpl = currentVal[1]
-  nextAmpl = nextVal[1]
-  
-  # at this point, we check the amplitude for a minima or a maxima...
-  if (currentAmpl >= prevAmpl and currentAmpl >= nextAmpl):		# greater than the previous and next..
-    # It's a maxima, captain!
-    maximas.append(currentAmpl)
-    peakTIme.append(time)
-	
-  if (currentAmpl <= prevAmpl and currentAmpl <= nextAmpl):
-    # minima...
-	minimas.append(currentAmpl)
-	
-print len(maximas)
-'''
+# next we apply the filter on the 'amplitude' variable (which is the data)
+filteredAmpl = scipy.signal.lfilter(b, a, amplitude)
+
+# we then plot these two w.r.t. time
+plt.figure(1)
+plt.clf
+plt.plot(time, amplitude, label='Original signal (Hz)')		# original
+plt.plot(time, filteredAmpl, label='Filtered signal (Hz)')	# filtered
+plt.xlabel('time (seconds)')
+plt.grid(True)
+plt.axis('tight')
+plt.legend(loc='upper left')
+plt.show()
