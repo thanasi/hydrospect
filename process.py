@@ -97,12 +97,12 @@ def savitzky_golay( y, window_size, order, deriv = 0 ):
     the point.
     Examples
     --------
-    t = np.linspace(-4, 4, 500)
-    y = np.exp( -t**2 ) + np.random.normal(0, 0.05, t.shape)
+    t = numpy.linspace(-4, 4, 500)
+    y = numpy.exp( -t**2 ) + numpy.random.normal(0, 0.05, t.shape)
     ysg = savitzky_golay(y, window_size=31, order=4)
     import matplotlib.pyplot as plt
     plt.plot(t, y, label='Noisy signal')
-    plt.plot(t, np.exp(-t**2), 'k', lw=1.5, label='Original signal')
+    plt.plot(t, numpy.exp(-t**2), 'k', lw=1.5, label='Original signal')
     plt.plot(t, ysg, 'r', label='Filtered signal')
     plt.legend()
     plt.show()
@@ -116,8 +116,8 @@ def savitzky_golay( y, window_size, order, deriv = 0 ):
        Cambridge University Press ISBN-13: 9780521880688
     """
     try:
-        window_size = np.abs( np.int( window_size ) )
-        order = np.abs( np.int( order ) )
+        window_size = numpy.abs( numpy.int( window_size ) )
+        order = numpy.abs( numpy.int( order ) )
     except ValueError, msg:
         raise ValueError( "window_size and order have to be of type int" )
     if window_size % 2 != 1 or window_size < 1:
@@ -127,14 +127,14 @@ def savitzky_golay( y, window_size, order, deriv = 0 ):
     order_range = range( order + 1 )
     half_window = ( window_size - 1 ) // 2
     # precompute coefficients
-    b = np.mat( [[k ** i for i in order_range] for k in range( -half_window, half_window + 1 )] )
-    m = np.linalg.pinv( b ).A[deriv]
+    b = numpy.mat( [[k ** i for i in order_range] for k in range( -half_window, half_window + 1 )] )
+    m = numpy.linalg.pinv( b ).A[deriv]
     # pad the signal at the extremes with
     # values taken from the signal itself
-    firstvals = y[0] - np.abs( y[1:half_window + 1][::-1] - y[0] )
-    lastvals = y[-1] + np.abs( y[-half_window - 1:-1][::-1] - y[-1] )
-    y = np.concatenate( ( firstvals, y, lastvals ) )
-    return np.convolve( m, y, mode = 'valid' )
+    firstvals = y[0] - numpy.abs( y[1:half_window + 1][::-1] - y[0] )
+    lastvals = y[-1] + numpy.abs( y[-half_window - 1:-1][::-1] - y[-1] )
+    y = numpy.concatenate( ( firstvals, y, lastvals ) )
+    return numpy.convolve( m, y, mode = 'valid' )
 
 # there are three epsilon arrays, and they in turn shall have 3 members,
 # the exctinction coefficients at 630, 850, 950 respectively.
@@ -174,13 +174,14 @@ b, a = scipy.signal.butter(butterOrder, [fCutoffHigh/fnyq])
 filteredAmpl = scipy.signal.lfilter(b, a, amplitude)
 
 # then we totally smooth the shit out of the filtered signal
-# smoothingOrder = 501		# this needs to be subtracted later from the smoothed array
-# smoothedAmpl = smooth(filteredAmpl, filteredAmpl)
+smoothingOrder = 501		# this needs to be subtracted later from the smoothed array
+# smoothedAmpl = smooth(filteredAmpl, filteredAmpl)			# using the dual-window smoothing function
+smoothedAmpl = savitzky_golay(filteredAmpl, window_size=551, order=4)								# Savitzky-Golay filter
 
 # Right. After this we bandpass it, while letter DC go through but not allowing a low-freqyency region between 0 and 0.5Hz to go through
-b,a = scipy.signal.butter(1, [0.1/fnyq, 0.5/fnyq], btype='bandstop')
+# b,a = scipy.signal.butter(1, [0.1/fnyq, 0.5/fnyq], btype='bandstop')
 # b = scipy.signal.firwin(2, cutoff=0.1, nyq=fnyq, pass_zero=True)
-lowFreqRemovedAmpl = scipy.signal.lfilter(b, a, filteredAmpl)
+# lowFreqRemovedAmpl = scipy.signal.lfilter(b, a, filteredAmpl)
 
 # we then plot these w.r.t. time
 plt.figure(1)
@@ -189,7 +190,8 @@ plt.autoscale(enable=True, axis='both', tight=True)
 plt.plot(time, amplitude, 'g', label='Original signal (Hz)')		# original, green
 plt.plot(time, filteredAmpl, 'b', label='Filtered signal (Hz)')		# filtered
 # plt.plot(time, smoothedAmpl[(smoothingOrder/2)-1:-(smoothingOrder/2)-1], 'k', label='Filtered signal (Hz)')		# smoothed, black colour 'k' and phase-adjusted to match the main signals
-plt.plot(time, lowFreqRemovedAmpl, 'r', label='Leveled signal (Hz)')
+plt.plot(time, smoothedAmpl, 'k', label='Savitzky-Golay smoothed')
+# plt.plot(time, lowFreqRemovedAmpl, 'r', label='Leveled signal (Hz)')
 
 plt.xlabel('time (seconds)')
 plt.grid(True)
