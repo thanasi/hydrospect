@@ -144,8 +144,17 @@ epsilon_H2O = []
 
 import matplotlib.pyplot as plt, numpy, scipy.signal
 
-fileToRead = 'data/20140522/630nm/20140522-0002/20140522-0002_1.txt'		# later we will add a TkInter dialog box to select data files.
-time, amplitude = numpy.loadtxt(fileToRead, skiprows=3, unpack=True)	# read in the file
+time = []
+amplitude = []
+for i in range(1,7):
+  fileToRead = 'data/20140522/630nm/20140522-0002/20140522-0002_' + str(i) + '.txt'		# later we will add a TkInter dialog box to select data files.
+  parttime, partamplitude = numpy.loadtxt(fileToRead, skiprows=3, unpack=True)	# read in the file
+  # we need to increment the parttime variable with the previous last item, since the oscilloscope seems to have divided the sections up without preserving the totality of time
+  # here we are assuming that all the data chunks are of the exact same time duration and sampling, which is true
+  parttime += (i-1)*10.00059975
+  time += parttime.tolist()			# need to convert array to list to be able to concatenate like a list
+  amplitude += partamplitude.tolist()
+  print i, parttime[0]
 
 # next we declare the holders for peaks
 maximas = []
