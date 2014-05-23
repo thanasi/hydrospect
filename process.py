@@ -144,7 +144,7 @@ epsilon_H2O = []
 
 import matplotlib.pyplot as plt, numpy, scipy.signal
 
-fileToRead = 'data.txt'		# later we will add a TkInter dialog box to select data files.
+fileToRead = 'data/20140522/630nm/20140522-0002/20140522-0002_1.txt'		# later we will add a TkInter dialog box to select data files.
 time, amplitude = numpy.loadtxt(fileToRead, skiprows=3, unpack=True)	# read in the file
 
 # next we declare the holders for peaks
