@@ -89,9 +89,27 @@ void setup() {
     controlP5.addButton("logic",1,dimv[0]+52,posv[1]+10,29,20).setId(i+50);
     controlP5.addButton("save",1,dimv[0]+92,posv[1]+10,29,20).setId(i+100);
     
-    // new buttons aadded by DJ..
-    controlP5.addButton("ADC resolution",1,dimv[0]+10,posv[1]+70,70,20).setId(i+150);
-    controlP5.addButton("Vref",1,dimv[0]+10,posv[1]+100,29,20).setId(i+200);
+    // new controlp5 elements aadded by DJ. These relate to the ADC
+    controlP5.addButton("Set ADC RES",1,dimv[0]+10,posv[1]+70,70,20).setId(500);
+    controlP5.addButton("Vref",1,dimv[0]+10,posv[1]+100,29,20).setId(501);
+    
+    Textfield ADCRes, Vref_value;
+    ADCRes = controlP5.addTextfield("ADCRes")
+    .setPosition(dimv[0]+90,posv[1]+70)
+      .setSize(30, 20)
+        .setFocus(false)
+          .setColor(color(255, 255, 255))
+            .setId(502)
+              .setText(str(int(scopes[0].getResolution())))
+                .setCaptionLabel("");
+    Vref_value = controlP5.addTextfield("Vref_value")
+    .setPosition(dimv[0]+90,posv[1]+100)
+      .setSize(30, 20)
+        .setFocus(false)
+          .setColor(color(255, 255, 255))
+            .setId(502)
+              .setText(str((scopes[0].getMultiplier())))
+                .setCaptionLabel("");
   }
   
   // println(Serial.list());
@@ -169,6 +187,12 @@ void controlEvent(ControlEvent theEvent) {
     String fname = "data"+(id-100)+".csv";
     scopes[id-100].saveData(fname);
     println("Saved as "+fname);
+  } else if (id == 500) {
+      print("New ADC resolution is "); 
+      println(controlP5.get(Textfield.class, "ADCRes").getText());
+  } else if (id == 501) {
+     print("New Vref for the ADC is "); 
+     println(controlP5.get(Textfield.class, "Vref_value").getText());
   }
 }
 
