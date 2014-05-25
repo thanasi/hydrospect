@@ -1,0 +1,5 @@
+>> javac -cp ..\..\library\core.jar Oscilloscope.jar
+
+// ^ this creates a file called Oscilloscope.class. Now you gotsta make it into jar..
+
+>> jar -cf arduinoscope.jar Oscilloscope.class

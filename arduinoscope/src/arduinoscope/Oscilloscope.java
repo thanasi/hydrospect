@@ -239,17 +239,6 @@ public class Oscilloscope implements PConstants {
 	        values[i] = values[i+1];
 	      }
 		  values[dim[0]-1] = val;
-		  
-		  // we don't need this min/max value foolishness anymore...
-		  /*
-	     
-	      if (val < minval){
-	        minval = val;
-	      }
-	      if (val > maxval){
-	        maxval=val;
-	      }
-		  */
 	    }
 	  }
 	
