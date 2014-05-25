@@ -88,6 +88,10 @@ void setup() {
     controlP5.addButton("pause",1,dimv[0]+10,posv[1]+10,32,20).setId(i);
     controlP5.addButton("logic",1,dimv[0]+52,posv[1]+10,29,20).setId(i+50);
     controlP5.addButton("save",1,dimv[0]+92,posv[1]+10,29,20).setId(i+100);
+    
+    // new buttons aadded by DJ..
+    controlP5.addButton("ADC resolution",1,dimv[0]+10,posv[1]+70,70,20).setId(i+150);
+    controlP5.addButton("Vref",1,dimv[0]+10,posv[1]+100,29,20).setId(i+200);
   }
   
   // println(Serial.list());

@@ -107,6 +107,7 @@ public class Oscilloscope implements PConstants {
 		return resolution;
 	}
 
+	// this needs to be tied to a ControlP5 button, to be able to change the resolution...
 	public void setResolution(float resolution) {
 		this.resolution = resolution;
 	}
@@ -115,6 +116,7 @@ public class Oscilloscope implements PConstants {
 		return multiplier;
 	}
 
+	// similarly, this needs to be tied to a ControlP5 button to be able to set the multiplier..
 	public void setMultiplier(float multiplier) {
 		this.multiplier = multiplier;
 	}
@@ -210,8 +212,13 @@ public class Oscilloscope implements PConstants {
 				
 	      }else{
 		  // here's our region of interest...
-		  // line(x_intitial, y_initial, x_final, y_final)
-	    	  myParent.line(pos[0] + dim[0]-x, pos[1] + dim[1]-getY(values[x-1])-1, pos[0] + dim[0]-x, pos[1] + dim[1]-getY(values[x])-1);
+		  // line(x_intitial, y_initial, x_final, y_final) w.r.t. top left corner
+	    	  myParent.line(
+			                 pos[0] + dim[0]-x, 
+							 pos[1] + dim[1]-getY(values[x-1])-1, 
+							 pos[0] + dim[0]-x, 
+							 pos[1] + dim[1]-getY(values[x])-1
+						   );
 	      }
 
 	    }
@@ -225,17 +232,24 @@ public class Oscilloscope implements PConstants {
 	
 	// add a single point
 	  public void addData(int val){
+	  // this function seems to push data onto the values[] variable. Why is this needed? It's needed for when we're saving the frame.
+	  // it's just begging to be extended to be able to save more than just that. We can buffer whatever we want!
 	    if (!pause){
 	      for (int i=0; i<dim[0]-1; i++){
 	        values[i] = values[i+1];
 	      }
-	      values[dim[0]-1] = val;
+		  values[dim[0]-1] = val;
+		  
+		  // we don't need this min/max value foolishness anymore...
+		  /*
+	     
 	      if (val < minval){
 	        minval = val;
 	      }
 	      if (val > maxval){
 	        maxval=val;
 	      }
+		  */
 	    }
 	  }
 	
