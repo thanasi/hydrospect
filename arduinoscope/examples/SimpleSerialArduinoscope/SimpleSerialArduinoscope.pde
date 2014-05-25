@@ -1,3 +1,8 @@
+// 2014 - 05 - 25 this is being modified by DJ
+// I tried to do so by forking from his github code, but unfortunately he's changed it completely from this
+// So I've simply taken this from the googlecode page and put it on the shared github repo for hydrospect.
+// due acknowledgement is given to David Konsumer, thanks for writing this!
+
 /*
   This is a basic serial arduinoscope.
   
@@ -48,12 +53,12 @@ ControlP5 controlP5;
 PFont fontLarge;
 PFont fontSmall;
 
-int LINE_FEED=10; 
+int LINE_FEED=13; // 13 is ASCII for carriage return
 
 int[] vals;
 
 void setup() {
-  size(800, 600, P2D);
+  size(800, 620, P2D);
   background(0);
   
   controlP5 = new ControlP5(this);
@@ -68,6 +73,7 @@ void setup() {
   
   // setup vals from serial
   vals = new int[scopes.length];
+  // println(scopes.length);
   
   for (int i=0;i<scopes.length;i++){
     int[] posv = new int[2];
@@ -84,6 +90,7 @@ void setup() {
     controlP5.addButton("save",1,dimv[0]+92,posv[1]+10,29,20).setId(i+100);
   }
   
+  // println(Serial.list());
   port = new Serial(this, Serial.list()[0], 115200);
   
   // clear and wait for linefeed
@@ -165,8 +172,9 @@ void controlEvent(ControlEvent theEvent) {
 void serialEvent(Serial p) { 
   String data = p.readStringUntil(LINE_FEED);
   if (data != null) {
-    // println(data);
-    vals = int(split(data, ' '));
+    // print(data);
+    vals[0] = int(parseFloat(data));
+    // println(vals[0]);
   }
 }
 

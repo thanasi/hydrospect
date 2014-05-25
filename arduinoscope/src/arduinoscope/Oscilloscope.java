@@ -37,7 +37,7 @@ import processing.core.PConstants;
 public class Oscilloscope implements PConstants {
 
 	PApplet myParent;
-	public final String VERSION = "0.1.0";
+	public final String VERSION = "0.1.1";
 	
 	private int[] pos = new int[2]; // x, y start position
 	private int[] dim = new int[2]; // w, h dimensions
@@ -198,6 +198,7 @@ public class Oscilloscope implements PConstants {
 	    }
 		
 		for (int x=1; x<dim[0]; x++) {
+		// if logic() part can totally be ignored since we're really not going to ever use this...
 			if (logic){
 	    		if (values[x] > (resolution/2)){
 	    			myParent.stroke(logic_colors[1]);
@@ -205,7 +206,11 @@ public class Oscilloscope implements PConstants {
 	    			myParent.stroke(logic_colors[0]);
 	    		}
 	    		myParent.line(pos[0] + dim[0]-x-2,   pos[1], pos[0] + dim[0]-x-2, pos[1] + dim[1]);
+				
+				
 	      }else{
+		  // here's our region of interest...
+		  // line(x_intitial, y_initial, x_final, y_final)
 	    	  myParent.line(pos[0] + dim[0]-x, pos[1] + dim[1]-getY(values[x-1])-1, pos[0] + dim[0]-x, pos[1] + dim[1]-getY(values[x])-1);
 	      }
 

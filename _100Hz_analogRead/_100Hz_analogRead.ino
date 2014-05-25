@@ -3,6 +3,7 @@
 //June 2012
 //http://www.instructables.com/id/Arduino-Timer-Interrupts/
 
+// 2014 - 05 - 25
 // This is a modified version of the code by DJ. I will be using Timer0 to make an interrupt happen every 100Hz
 // and then I'll attempt to use port manipulation to quickly analogRead a pin and send it to the Serial port
 
@@ -28,23 +29,12 @@ void setup(){
 
 }//end setup
 
-ISR(TIMER0_COMPA_vect){//timer0 interrupt 2kHz toggles pin 8
-/*
-//generates pulse wave of frequency 2kHz/2 = 1kHz (takes two cycles for full wave- toggle high then toggle low)
-  if (toggle0){
-    digitalWrite(8,HIGH);
-    toggle0 = 0;
-  }
-  else{
-    digitalWrite(8,LOW);
-    toggle0 = 1;
-  }
-  */
-  
+ISR(TIMER0_COMPA_vect){//timer0 interrupt 
+ 
   Serial.println(analogRead(A0));
 }
 
 void loop(){
-  //do other things here
+  // only needed as a formality
 
 }
