@@ -137,8 +137,8 @@ void draw()
     float multiplier = scopes[i].getMultiplier()/scopes[i].getResolution();
     
     // convert arduino vals to voltage
-    float minval = scopes[i].getMinval() * multiplier;
-    float maxval = scopes[i].getMaxval() * multiplier;
+    // float minval = scopes[i].getMinval() * multiplier;
+    // float maxval = scopes[i].getMaxval() * multiplier;
     int[] values = scopes[i].getValues(); 
     float pinval =  values[values.length-1] * multiplier;
     
@@ -157,8 +157,8 @@ void draw()
     text(pinval, width-60, pos[1] + dim[1] - 10);
     
     textFont(fontSmall);
-    text("min: " + minval, dim[0] + 10, pos[1] + 40);
-    text("max: " + maxval, dim[0] + 10, pos[1] + 48);
+    // text("min: " + minval, dim[0] + 10, pos[1] + 40);
+    // text("max: " + maxval, dim[0] + 10, pos[1] + 48);
     
     fill(scopes[i].getLine_color());
     text("pin: " + i, dim[0] + 10,pos[1] + dim[1] - 10);
