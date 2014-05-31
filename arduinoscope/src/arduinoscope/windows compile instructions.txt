@@ -1,0 +1,7 @@
+you should be in the src folder (this folder itself)
+
+$ javac -cp .\core.jar Oscilloscope.java
+$ cd .. [[ go one folder above ]]
+$ jar -cf arduinoscope.jar arduinoscope\Oscilloscope.class
+
+The funda: THe class file (whih contains the main public class Oscilloscope) should be within a folder called arduinoscope, otherwise processing will not detect it.
