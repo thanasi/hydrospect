@@ -190,7 +190,8 @@ void controlEvent(ControlEvent theEvent) {
     println("Saved as "+fname);
   } else if (id == 500) {
       print("New ADC resolution is "); 
-      println(controlP5.get(Textfield.class, "ADCRes").getText());
+      scopes[0].setResolution(float(controlP5.get(Textfield.class, "ADCRes").getText()));
+      println(scopes[0].getResolution());
   } else if (id == 501) {
      print("New Vref for the ADC is "); 
      // println(controlP5.get(Textfield.class, "Vref_value").getText());
