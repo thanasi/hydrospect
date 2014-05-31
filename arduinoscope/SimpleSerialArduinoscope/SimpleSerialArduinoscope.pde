@@ -135,6 +135,7 @@ void draw()
     
     // conversion multiplier for voltage
     float multiplier = scopes[i].getMultiplier()/scopes[i].getResolution();
+    // println(multiplier);
     
     // convert arduino vals to voltage
     // float minval = scopes[i].getMinval() * multiplier;
@@ -192,7 +193,9 @@ void controlEvent(ControlEvent theEvent) {
       println(controlP5.get(Textfield.class, "ADCRes").getText());
   } else if (id == 501) {
      print("New Vref for the ADC is "); 
-     println(controlP5.get(Textfield.class, "Vref_value").getText());
+     // println(controlP5.get(Textfield.class, "Vref_value").getText());
+     scopes[0].setMultiplier(float(controlP5.get(Textfield.class, "Vref_value").getText()));
+     println(scopes[0].getMultiplier());
   }
 }
 
