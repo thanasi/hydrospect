@@ -44,11 +44,11 @@ import processing.serial.*;
 // http://www.sojamo.de/libraries/controlP5/
 import controlP5.*;
 
-
 // how many scopes, you decide.
 Oscilloscope[] scopes = new Oscilloscope[1];
 Serial port;
 ControlP5 controlP5;
+
 
 PFont fontLarge;
 PFont fontSmall;
@@ -56,6 +56,7 @@ PFont fontSmall;
 int LINE_FEED=13; // 13 is ASCII for carriage return
 
 int[] vals;
+float mx, my;
 
 void setup() {
   size(800, 620, P2D);
@@ -79,11 +80,20 @@ void setup() {
     int[] posv = new int[2];
     posv[0]=0;
     posv[1]=dimv[1]*i;
+       
+    // the next variables are the default zoom origin...
+    mx = posv[0] + dimv[0]/2;
+    my = posv[1] + dimv[1]/2;
 
     // random color, that will look nice and be visible
     scopes[i] = new Oscilloscope(this, posv, dimv);
+    scopes[i].setScaleX(1.0f);
+    scopes[i].setScaleY(1.0f);
     scopes[i].setLine_color(color((int)random(255), (int)random(127)+127, 255));
     
+    // hard-coding the ADC res and Vref at the start..
+    scopes[i].setResolution(8192.0f);
+    scopes[i].setMultiplier(3.3f);
     
     controlP5.addButton("pause",1,dimv[0]+10,posv[1]+10,32,20).setId(i);
     controlP5.addButton("logic",1,dimv[0]+52,posv[1]+10,29,20).setId(i+50);
@@ -131,7 +141,7 @@ void draw()
     // update and draw scopes
     
     scopes[i].addData(vals[i]);
-    scopes[i].draw();
+    scopes[i].draw(mx, my);
     
     // conversion multiplier for voltage
     float multiplier = scopes[i].getMultiplier()/scopes[i].getResolution();
@@ -185,7 +195,7 @@ void controlEvent(ControlEvent theEvent) {
   }else if (id < 100){
     scopes[id-50].setLogicMode(!scopes[id-50].isLogicMode());
   }else if(id < 150){
-    String fname = "data"+(id-100)+".csv";
+    String fname = year() + "" + month() + "" + day() +".csv";
     scopes[id-100].saveData(fname);
     println("Saved as "+fname);
   } else if (id == 500) {
@@ -258,4 +268,22 @@ int[] getTestValuesSquare(){
   }
   
   return vals;
+}
+
+// an exciting little piece of code to get mouse position, and hopefully make a zoom and drag thing out of it
+void mousePressed() {
+  // deal with the left button (zoom)
+  if (mouseButton == LEFT) {
+    println("left button");
+  // deal with the right button (zoom out)
+  } else if (mouseButton == RIGHT) {
+    println("right");
+  }  
+}
+
+void mouseReleased() {
+  // printMouseCoordinates();
+}
+void printMouseCoordinates() {
+   println(mouseX + ", " + mouseY); 
 }

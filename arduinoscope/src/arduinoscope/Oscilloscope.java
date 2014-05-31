@@ -54,6 +54,26 @@ public class Oscilloscope implements PConstants {
 	private boolean logic; // use colors to show 0/1?
 	private boolean pause; // freeze input?
 	
+	// the following were added for the zooming function...
+	private float scaleX;
+	private float scaleY;
+	
+	public float getScaleX(){
+		return scaleX;
+		}
+		
+	public float getScaleY(){
+		return scaleY;
+		}
+		
+	public void setScaleX(float x){
+		scaleX=x;
+		}
+		
+	public void setScaleY(float y){
+		scaleY=y;
+		}
+	
 	public int[] getPos() {
 		return pos;
 	}
@@ -194,7 +214,9 @@ public class Oscilloscope implements PConstants {
 		return VERSION;
 	}
 	
-	public void draw(){		
+	public void draw(float mx, float my){		
+	 // 'mx' and 'my' are the coordinates w.r.t which the zoom is done. 
+	 // by default, when no mouse has been specified for th zoom, they should be the center of the screen.
 		if (!logic){
 			myParent.stroke(line_color);
 	    }
@@ -214,10 +236,18 @@ public class Oscilloscope implements PConstants {
 		  // here's our region of interest...
 		  // line(x_intitial, y_initial, x_final, y_final) w.r.t. top left corner
 	    	  myParent.line(
-			                 pos[0] + dim[0]-x, 
+							/*
+			                 pos[0] + dim[0] - (x-1), 
+							 pos[1] + dim[1] - scaleY*(getY(values[x-1]) - my) + my - 1, 
+							 pos[0] + dim[0] - x, 
+							 pos[1] + dim[1] - scaleY*(getY(values[x]) - my) + my  - 1
+							 */
+							 
+							 pos[0] + dim[0]-(x-1), 
 							 pos[1] + dim[1]-getY(values[x-1])-1, 
 							 pos[0] + dim[0]-x, 
 							 pos[1] + dim[1]-getY(values[x])-1
+							 
 						   );
 	      }
 
@@ -246,13 +276,13 @@ public class Oscilloscope implements PConstants {
 	public void saveData(String filename){
 	    String[] lines = new String[values.length];
 	    for (int i = 0; i < values.length; i++) {
-	    	lines[i] = "" + values[i];
+	    	lines[i] = "" + (values[i]*multiplier/resolution);
 	    }
 	    myParent.saveStrings(filename, lines);
     }
 	
 	private int getY(int val){
-		return (int)(val / resolution * dim[1]) - 1;
+		return (int)((val / resolution) * dim[1]) - 1;
 	}
 	
 	
