@@ -262,10 +262,28 @@ void controlEvent(ControlEvent theEvent) {
     scopes[0].setScaleY(scopes[0].getScaleY()/1.1);
   } else if (id == 503) {
     scopes[0].setScaleY(scopes[0].getScaleY()*1.1);
+    if (scopes[0].getScaleY() >= 19) {
+      scopes[0].setScaleY(19.0f);
+    }
   } else if (id == 504) {
-    mouseOffsetX = 0; mouseOffsetY = 0; mouseOffsetYprev = 0; 
+    mouseOffsetY = 0; mouseOffsetYprev = 0; 
   } else if (id == 505) {
     scopes[0].setScaleY(1.0f);
+  } else if (id == 506) {
+    // scopes[0].setPause(true);    // pausekar
+    if (scopes[0].getScaleX() != 1.0f) {
+      scopes[0].setScaleX(scopes[0].getScaleX()/1.1);
+    }
+    if (scopes[0].getScaleX() < 1.0f) {
+      // failsafe in case it gets zoomed out too damn much..
+     scopes[0].setScaleX(1.0f); 
+    }
+  } else if (id == 507) {
+    scopes[0].setScaleX(scopes[0].getScaleX()*1.1);
+  } else if (id == 508) {
+    mouseOffsetX = 0; mouseOffsetXprev = 0; 
+  } else if (id == 509) {
+    scopes[0].setScaleX(1.0f);
   }
 }
 

@@ -221,7 +221,7 @@ public class Oscilloscope implements PConstants {
 			myParent.stroke(line_color);
 	    }
 		
-		for (int x=1; x<dim[0]; x++) {
+		for (int x=1; x < (dim[0]/scaleX); x++) {
 		// if logic() part can totally be ignored since we're really not going to ever use this...
 			if (logic){
 	    		if (values[x] > (resolution/2)){
@@ -237,9 +237,9 @@ public class Oscilloscope implements PConstants {
 		  // line(x_intitial, y_initial, x_final, y_final) w.r.t. top left corner
 	    	  myParent.line(
 							
-			                 pos[0] + dim[0] - (x-1), 
+			                 pos[0] + dim[0] - scaleX*(x-1), 
 							 mouseOffsetY + pos[1] + dim[1] - scaleY*(getY(values[x-1]) - (dim[1] - my)) - (dim[1] - my) - 1, 
-							 pos[0] + dim[0] - x, 
+							 pos[0] + dim[0] - scaleX*x, 
 							 mouseOffsetY + pos[1] + dim[1] - scaleY*(getY(values[x]) - (dim[1] - my)) - (dim[1] - my)  - 1
 							 
 							 /*
@@ -262,13 +262,15 @@ public class Oscilloscope implements PConstants {
 	
 	// add a single point
 	  public void addData(int val){
-	  // this function seems to push data onto the values[] variable. Why is this needed? It's needed for when we're saving the frame.
-	  // it's just begging to be extended to be able to save more than just that. We can buffer whatever we want!
+	  // this function is buffering the data into the values[] array
+	  // when a new value is 'added' during the serial event, the previos values are all pushed back by one, and the new one is appended at the end.
+	  // the rate of this would be decided by the serialevent rate from processing
 	    if (!pause){
-	      for (int i=0; i<dim[0]-1; i++){
+	      for (int i=0; i < (int)((float)dim[0]/scaleX)-1; i++){
 	        values[i] = values[i+1];
 	      }
-		  values[dim[0]-1] = val;
+		  // the last value is then added at the end...
+		  values[(int)((float)dim[0]/scaleX) - 1] = val;
 	    }
 	  }
 	
