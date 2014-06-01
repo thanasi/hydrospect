@@ -238,9 +238,9 @@ public class Oscilloscope implements PConstants {
 	    	  myParent.line(
 							
 			                 pos[0] + dim[0] - (x-1), 
-							 pos[1] + dim[1] - scaleY*(getY(values[x-1]) - my) - my - 1, 
+							 pos[1] + dim[1] - scaleY*(getY(values[x-1]) - (dim[1] - my)) - (dim[1] - my) - 1, 
 							 pos[0] + dim[0] - x, 
-							 pos[1] + dim[1] - scaleY*(getY(values[x]) - my) - my  - 1
+							 pos[1] + dim[1] - scaleY*(getY(values[x]) - (dim[1] - my)) - (dim[1] - my)  - 1
 							 
 							 /*
 							 pos[0] + dim[0]-(x-1), 

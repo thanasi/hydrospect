@@ -282,15 +282,17 @@ void mousePressed() {
     printMouseCoordinates();
   // deal with the left button (zoom)
   if (mouseButton == LEFT && mouseX < dimv[0]) {
-    mx = mouseX;
-    my = mouseY;
+    // mx = mouseX;  my = mouseY;
     scopes[0].setScaleY(scopes[0].getScaleY()*1.1);
   // deal with the right button (zoom out)
   } else if (mouseButton == RIGHT && mouseX < dimv[0]) {
-    mx = mouseX;
-    my = mouseY;
+    // mx = mouseX;  my = mouseY;
     scopes[0].setScaleY(scopes[0].getScaleY()/1.1);
   }  
+}
+
+void mouseDragged() {
+  mx = dimv[0] - mouseX;  my = dimv[1] - mouseY;
 }
 
 void mouseReleased() {
