@@ -57,10 +57,13 @@ int LINE_FEED=13; // 13 is ASCII for carriage return
 
 int[] vals;
 int[] dimv = new int[2];
+int[] posv = new int[2];
 
 // zoom-related variables..
 // mx and my represent the zoom origin point.. the eye of the storm
 float mx, my;
+float mouseOffsetX = 0, mouseOffsetY = 0, mouseOffsetXprev = 0, mouseOffsetYprev = 0;
+int mouseStartPositionX, mouseStartPositionY;
 
 void setup() {
   size(800, 620, P2D);
@@ -81,7 +84,6 @@ void setup() {
   // println(scopes.length);
   
   for (int i=0;i<scopes.length;i++){
-    int[] posv = new int[2];
     posv[0]=0;
     posv[1]=dimv[1]*i;
        
@@ -104,10 +106,15 @@ void setup() {
     controlP5.addButton("save",1,dimv[0]+92,posv[1]+10,29,20).setId(i+100);
     
     // new controlp5 elements aadded by DJ. These relate to the ADC
+    Textlabel label1, label2;
+    stroke(255, 255, 255);
+    line(dimv[0] + 10, posv[1]+45, dimv[0] + 130, posv[1]+45);
+    
+    controlP5.addTextlabel("label1").setText("ADC STUFF...").setPosition(dimv[0]+10, posv[1]+50);
     controlP5.addButton("Set ADC RES",1,dimv[0]+10,posv[1]+70,70,20).setId(500);
     controlP5.addButton("Vref",1,dimv[0]+10,posv[1]+100,29,20).setId(501);
     
-    Textfield ADCRes, Vref_value;
+    Textfield ADCRes, Vref_value, ZoomLevel;
     ADCRes = controlP5.addTextfield("ADCRes")
     .setPosition(dimv[0]+90,posv[1]+70)
       .setSize(30, 20)
@@ -126,7 +133,21 @@ void setup() {
                 .setCaptionLabel("");
                 
     // Next we define the zoom buttons, and the zoom textfield indicator..
+    controlP5.addTextlabel("label2").setText("Y-ZOOMING").setPosition(dimv[0]+10, posv[1]+135);
+    controlP5.addButton("Zoom-",1,dimv[0]+10,posv[1]+150,35,20).setId(502);
+    controlP5.addButton("Zoom+",1,dimv[0]+85,posv[1]+150,35,20).setId(503);
+    controlP5.addButton("Center0",1,dimv[0]+10,posv[1]+180,50,20).setId(504);
+    controlP5.addButton("Zoom0",1,dimv[0]+70,posv[1]+180,50,20).setId(505);
     
+    ZoomLevel = controlP5.addTextfield("ZoomLevel")
+    .setPosition(dimv[0]+50,posv[1]+150)
+      .setSize(30, 20)
+        .setFocus(false)
+          .setColor(color(255, 255, 255))
+            .setId(502)
+              .setText(str(scopes[0].getScaleY()))
+                .setCaptionLabel("");
+
   }
   
   // println(Serial.list());
@@ -140,6 +161,10 @@ void setup() {
 void draw()
 {
   background(0);
+  stroke(255, 255, 255);
+  line(dimv[0], posv[1]+45, dimv[0] + 130, posv[1]+45);
+  line(dimv[0], posv[1]+130, dimv[0] + 130, posv[1]+130);
+  line(dimv[0], posv[1]+210, dimv[0] + 130, posv[1]+210);
   
   // int[] vals = getTestValuesSquare();
   // int[] vals = getTestValuesSin();
@@ -148,7 +173,7 @@ void draw()
     // update and draw scopes
     
     scopes[i].addData(vals[i]);
-    scopes[i].draw(mx, my);
+    scopes[i].draw(mx, my, mouseOffsetX, mouseOffsetY);
     
     // conversion multiplier for voltage
     float multiplier = scopes[i].getMultiplier()/scopes[i].getResolution();
@@ -189,6 +214,8 @@ void draw()
   
   // update buttons
   controlP5.draw();
+  // update the values of variables in the controlP5 elements..
+  controlP5.get(Textfield.class, "ZoomLevel").setText(String.format("%.2f", scopes[0].getScaleY()));
   
 }
 
@@ -214,6 +241,14 @@ void controlEvent(ControlEvent theEvent) {
      // println(controlP5.get(Textfield.class, "Vref_value").getText());
      scopes[0].setMultiplier(float(controlP5.get(Textfield.class, "Vref_value").getText()));
      println(scopes[0].getMultiplier());
+  } else if (id == 502) {
+    scopes[0].setScaleY(scopes[0].getScaleY()/1.1);
+  } else if (id == 503) {
+    scopes[0].setScaleY(scopes[0].getScaleY()*1.1);
+  } else if (id == 504) {
+    mouseOffsetX = 0; mouseOffsetY = 0; mouseOffsetYprev = 0; 
+  } else if (id == 505) {
+    scopes[0].setScaleY(1.0f);
   }
 }
 
@@ -283,20 +318,23 @@ void mousePressed() {
   // deal with the left button (zoom)
   if (mouseButton == LEFT && mouseX < dimv[0]) {
     // mx = mouseX;  my = mouseY;
-    scopes[0].setScaleY(scopes[0].getScaleY()*1.1);
+    mouseStartPositionY = mouseY - (int)mouseOffsetYprev; 
+    
   // deal with the right button (zoom out)
   } else if (mouseButton == RIGHT && mouseX < dimv[0]) {
     // mx = mouseX;  my = mouseY;
-    scopes[0].setScaleY(scopes[0].getScaleY()/1.1);
+    
   }  
 }
 
 void mouseDragged() {
-  mx = dimv[0] - mouseX;  my = dimv[1] - mouseY;
+  // mx = dimv[0] - mouseX;  my = dimv[1] - mouseY;
+  mouseOffsetY = mouseY - mouseStartPositionY;
 }
 
 void mouseReleased() {
   // printMouseCoordinates();
+  mouseOffsetYprev = mouseOffsetY;
 }
 void printMouseCoordinates() {
    println(mouseX + ", " + mouseY); 

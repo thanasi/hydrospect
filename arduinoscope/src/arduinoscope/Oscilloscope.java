@@ -214,7 +214,7 @@ public class Oscilloscope implements PConstants {
 		return VERSION;
 	}
 	
-	public void draw(float mx, float my){		
+	public void draw(float mx, float my, float mouseOffsetX, float mouseOffsetY){		
 	 // 'mx' and 'my' are the coordinates w.r.t which the zoom is done. 
 	 // by default, when no mouse has been specified for th zoom, they should be the center of the screen.
 		if (!logic){
@@ -238,9 +238,9 @@ public class Oscilloscope implements PConstants {
 	    	  myParent.line(
 							
 			                 pos[0] + dim[0] - (x-1), 
-							 pos[1] + dim[1] - scaleY*(getY(values[x-1]) - (dim[1] - my)) - (dim[1] - my) - 1, 
+							 mouseOffsetY + pos[1] + dim[1] - scaleY*(getY(values[x-1]) - (dim[1] - my)) - (dim[1] - my) - 1, 
 							 pos[0] + dim[0] - x, 
-							 pos[1] + dim[1] - scaleY*(getY(values[x]) - (dim[1] - my)) - (dim[1] - my)  - 1
+							 mouseOffsetY + pos[1] + dim[1] - scaleY*(getY(values[x]) - (dim[1] - my)) - (dim[1] - my)  - 1
 							 
 							 /*
 							 pos[0] + dim[0]-(x-1), 
