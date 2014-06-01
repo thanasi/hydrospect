@@ -56,6 +56,7 @@ PFont fontSmall;
 int LINE_FEED=13; // 13 is ASCII for carriage return
 
 int[] vals;
+int[] dimv = new int[2];
 
 // zoom-related variables..
 // mx and my represent the zoom origin point.. the eye of the storm
@@ -71,8 +72,8 @@ void setup() {
   fontLarge = loadFont("TrebuchetMS-20.vlw");
   fontSmall = loadFont("Uni0554-8.vlw");
   
-  int[] dimv = new int[2];
-  dimv[0] = width-130; // 130 margin for text
+  dimv[0] = width-130;
+  // 130 margin for text
   dimv[1] = height/scopes.length;
   
   // setup vals from serial
@@ -278,13 +279,16 @@ int[] getTestValuesSquare(){
 
 // an exciting little piece of code to get mouse position, and hopefully make a zoom and drag thing out of it
 void mousePressed() {
-    mx = mouseX;
-    my = mouseY;
+    printMouseCoordinates();
   // deal with the left button (zoom)
   if (mouseButton == LEFT && mouseX < dimv[0]) {
+    mx = mouseX;
+    my = mouseY;
     scopes[0].setScaleY(scopes[0].getScaleY()*1.1);
   // deal with the right button (zoom out)
-  } else if (mouseButton == RIGHT) {
+  } else if (mouseButton == RIGHT && mouseX < dimv[0]) {
+    mx = mouseX;
+    my = mouseY;
     scopes[0].setScaleY(scopes[0].getScaleY()/1.1);
   }  
 }
