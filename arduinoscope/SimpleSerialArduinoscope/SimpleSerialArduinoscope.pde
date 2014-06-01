@@ -56,6 +56,9 @@ PFont fontSmall;
 int LINE_FEED=13; // 13 is ASCII for carriage return
 
 int[] vals;
+
+// zoom-related variables..
+// mx and my represent the zoom origin point.. the eye of the storm
 float mx, my;
 
 void setup() {
@@ -120,6 +123,9 @@ void setup() {
             .setId(502)
               .setText(str((scopes[0].getMultiplier())))
                 .setCaptionLabel("");
+                
+    // Next we define the zoom buttons, and the zoom textfield indicator..
+    
   }
   
   // println(Serial.list());
@@ -272,12 +278,14 @@ int[] getTestValuesSquare(){
 
 // an exciting little piece of code to get mouse position, and hopefully make a zoom and drag thing out of it
 void mousePressed() {
+    mx = mouseX;
+    my = mouseY;
   // deal with the left button (zoom)
-  if (mouseButton == LEFT) {
-    println("left button");
+  if (mouseButton == LEFT && mouseX < dimv[0]) {
+    scopes[0].setScaleY(scopes[0].getScaleY()*1.1);
   // deal with the right button (zoom out)
   } else if (mouseButton == RIGHT) {
-    println("right");
+    scopes[0].setScaleY(scopes[0].getScaleY()/1.1);
   }  
 }
 

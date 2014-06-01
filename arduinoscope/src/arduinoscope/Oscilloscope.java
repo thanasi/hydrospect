@@ -236,18 +236,18 @@ public class Oscilloscope implements PConstants {
 		  // here's our region of interest...
 		  // line(x_intitial, y_initial, x_final, y_final) w.r.t. top left corner
 	    	  myParent.line(
-							/*
+							
 			                 pos[0] + dim[0] - (x-1), 
-							 pos[1] + dim[1] - scaleY*(getY(values[x-1]) - my) + my - 1, 
+							 pos[1] + dim[1] - scaleY*(getY(values[x-1]) - my) - my - 1, 
 							 pos[0] + dim[0] - x, 
-							 pos[1] + dim[1] - scaleY*(getY(values[x]) - my) + my  - 1
-							 */
+							 pos[1] + dim[1] - scaleY*(getY(values[x]) - my) - my  - 1
 							 
+							 /*
 							 pos[0] + dim[0]-(x-1), 
 							 pos[1] + dim[1]-getY(values[x-1])-1, 
 							 pos[0] + dim[0]-x, 
 							 pos[1] + dim[1]-getY(values[x])-1
-							 
+							 */
 						   );
 	      }
 
