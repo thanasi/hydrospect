@@ -106,7 +106,7 @@ void setup() {
     controlP5.addButton("save",1,dimv[0]+92,posv[1]+10,29,20).setId(i+100);
     
     // new controlp5 elements aadded by DJ. These relate to the ADC
-    Textlabel label1, label2;
+    Textlabel label1, label2, label3;
     stroke(255, 255, 255);
     line(dimv[0] + 10, posv[1]+45, dimv[0] + 130, posv[1]+45);
     
@@ -114,7 +114,7 @@ void setup() {
     controlP5.addButton("Set ADC RES",1,dimv[0]+10,posv[1]+70,70,20).setId(500);
     controlP5.addButton("Vref",1,dimv[0]+10,posv[1]+100,29,20).setId(501);
     
-    Textfield ADCRes, Vref_value, ZoomLevel;
+    Textfield ADCRes, Vref_value, ZoomLevelX, ZoomLevelY;
     ADCRes = controlP5.addTextfield("ADCRes")
     .setPosition(dimv[0]+90,posv[1]+70)
       .setSize(30, 20)
@@ -132,20 +132,36 @@ void setup() {
               .setText(str((scopes[0].getMultiplier())))
                 .setCaptionLabel("");
                 
-    // Next we define the zoom buttons, and the zoom textfield indicator..
+    // y-zoom
     controlP5.addTextlabel("label2").setText("Y-ZOOMING").setPosition(dimv[0]+10, posv[1]+135);
-    controlP5.addButton("Zoom-",1,dimv[0]+10,posv[1]+150,35,20).setId(502);
-    controlP5.addButton("Zoom+",1,dimv[0]+85,posv[1]+150,35,20).setId(503);
-    controlP5.addButton("Center0",1,dimv[0]+10,posv[1]+180,50,20).setId(504);
-    controlP5.addButton("Zoom0",1,dimv[0]+70,posv[1]+180,50,20).setId(505);
+    controlP5.addButton("YZoom-",1,dimv[0]+10,posv[1]+150,35,20).setId(502);
+    controlP5.addButton("YZoom+",1,dimv[0]+85,posv[1]+150,35,20).setId(503);
+    controlP5.addButton("YCenter0",1,dimv[0]+10,posv[1]+180,50,20).setId(504);
+    controlP5.addButton("YZoom0",1,dimv[0]+70,posv[1]+180,50,20).setId(505);
     
-    ZoomLevel = controlP5.addTextfield("ZoomLevel")
+    ZoomLevelY = controlP5.addTextfield("ZoomLevelY")
     .setPosition(dimv[0]+50,posv[1]+150)
       .setSize(30, 20)
         .setFocus(false)
           .setColor(color(255, 255, 255))
             .setId(502)
               .setText(str(scopes[0].getScaleY()))
+                .setCaptionLabel("");
+
+    // x-zoom
+    controlP5.addTextlabel("label3").setText("X-ZOOMING").setPosition(dimv[0]+10, posv[1]+215);
+    controlP5.addButton("XZoom-",1,dimv[0]+10,posv[1]+230,35,20).setId(506);
+    controlP5.addButton("XZoom+",1,dimv[0]+85,posv[1]+230,35,20).setId(507);
+    controlP5.addButton("XCenter0",1,dimv[0]+10,posv[1]+260,50,20).setId(508);
+    controlP5.addButton("XZoom0",1,dimv[0]+70,posv[1]+260,50,20).setId(509);
+    
+    ZoomLevelX = controlP5.addTextfield("ZoomLevelX")
+    .setPosition(dimv[0]+50,posv[1]+230)
+      .setSize(30, 20)
+        .setFocus(false)
+          .setColor(color(255, 255, 255))
+            .setId(502)
+              .setText(str(scopes[0].getScaleX()))
                 .setCaptionLabel("");
 
   }
@@ -165,6 +181,7 @@ void draw()
   line(dimv[0], posv[1]+45, dimv[0] + 130, posv[1]+45);
   line(dimv[0], posv[1]+130, dimv[0] + 130, posv[1]+130);
   line(dimv[0], posv[1]+210, dimv[0] + 130, posv[1]+210);
+  line(dimv[0], posv[1]+290, dimv[0] + 130, posv[1]+290);
   
   // int[] vals = getTestValuesSquare();
   // int[] vals = getTestValuesSin();
@@ -215,7 +232,7 @@ void draw()
   // update buttons
   controlP5.draw();
   // update the values of variables in the controlP5 elements..
-  controlP5.get(Textfield.class, "ZoomLevel").setText(String.format("%.2f", scopes[0].getScaleY()));
+  controlP5.get(Textfield.class, "ZoomLevelY").setText(String.format("%.2f", scopes[0].getScaleY()));
   
 }
 
