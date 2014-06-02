@@ -38,6 +38,7 @@ print("data collection done!")
 teensy.close()
 # step 6: PROCESSING begins. Find the peaks for both variables. Store into variable/array. Find the time difference between peaks, and store this into variables.
 
+
 # step 7: find the logs of the ratios from the peaks.
 
 # step 8: find the o2 sat value yo. spit it out.
