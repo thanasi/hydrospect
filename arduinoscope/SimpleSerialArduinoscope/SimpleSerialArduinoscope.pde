@@ -233,6 +233,7 @@ void draw()
   controlP5.draw();
   // update the values of variables in the controlP5 elements..
   controlP5.get(Textfield.class, "ZoomLevelY").setText(String.format("%.2f", scopes[0].getScaleY()));
+  controlP5.get(Textfield.class, "ZoomLevelX").setText(String.format("%.2f", scopes[0].getScaleX()));
   
 }
 
