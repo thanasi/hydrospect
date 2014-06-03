@@ -149,9 +149,14 @@ print irMaximas
 '''
 
 ### will find the pulse now, as the test...
-print len(redMaximas)
-for k in range(0, len(redMaximas)-1):
-  print(redMinimas[k+1]-redMinimas[k])*0.005
+averager = 0
+for k in range(0, len(redMaximas[0])-2):
+  pulse = 60/((redMaximas[0][k+1]-redMaximas[0][k])*0.005)
+  averager += pulse
+  
+print "here's your pulse: "
+print averager/len(redMaximas[0])
+  
   
 ### we shall now plot them...
 plt.plot(t, redData, 'k--', t, irData, 'b--')
