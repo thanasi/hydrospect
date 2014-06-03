@@ -133,12 +133,12 @@ irDataSmoothed = smooth(numpy.array(irData), window_len=smoothWindow)[plotCutoff
 # also remember that argrelextrema returns the indices of the extremas, not the extremas themselves
 ### finding the maximas...
 argrelOrder = 30				# set the order/window for maxima/minima peak finding
-redMaximas = scipy.signal.argrelmax(redDataSmoothed, order=argrelOrder)
-irMaximas = scipy.signal.argrelmax(irDataSmoothed, order=argrelOrder)
+redMaximas = scipy.signal.argrelmax(redDataSmoothed, order=argrelOrder)[0]
+irMaximas = scipy.signal.argrelmax(irDataSmoothed, order=argrelOrder)[0]
 
 ### finding the minimas...
-redMinimas = scipy.signal.argrelmin(redDataSmoothed, order=argrelOrder)
-irMinimas = scipy.signal.argrelmin(irDataSmoothed, order=argrelOrder)
+redMinimas = scipy.signal.argrelmin(redDataSmoothed, order=argrelOrder)[0]
+irMinimas = scipy.signal.argrelmin(irDataSmoothed, order=argrelOrder)[0]
 
 ### printing out the maximas and minimas to test...
 '''
@@ -151,28 +151,20 @@ print irMaximas
 ### will find the pulse now, as the test...
 # we'll use the IR to find pulse, as the heartbeat would be generally stable by then
 averager = 0
-for k in range(0, len(irMaximas[0])-2):
-  pulse = 60/((irMaximas[0][k+1]-irMaximas[0][k])*0.005)
+for k in range(0, len(irMaximas)-2):
+  pulse = 60/((irMaximas[k+1]-irMaximas[k])*0.005)
   averager += pulse
   
 print "here's your pulse: "
-print averager/(len(irMaximas[0])-1)
+print averager/(len(irMaximas)-1)
   
 # step 7: find the logs of the ratios from the peaks.
-redRatioAverager = 0.0		# ratio of the AC and DC values
-### we start from 1 and not 0, because the first point is usually crap, so we'll ignore it.
-ranger = int(min(len(redMinimas), len(redMaximas)))
-for m in range(1, ranger):
-  redRatioAverager += float(redMaximas[0][m])/float(redMinimas[0][m])
- 
-redRatio = redRatioAverager/float(ranger-2)
 
-irRatioAverager = 0.0		# ratio of AC and DC for IR
-ranger = int(min(len(irMinimas), len(irMaximas)))
-for n in range(1, ranger):
-  irRatioAverager += float(irMaximas[0][n])/float(irMinimas[0][n])
+ranger = min(redMinimas.shape[0], redMaximas.shape[0])
+redRatio = (redMaximas[1:ranger].astype(float) / redMinimas[1:ranger].astype(float)).mean()
 
-irRatio = irRatioAverager/float(ranger-2)
+ranger = min(irMinimas.shape[0], irMaximas.shape[0])
+irRatio = (irMaximas[1:ranger].astype(float) / irMinimas[1:ranger].astype(float)).mean()
 
 # step 8: find the o2 sat value yo. spit it out.
 print redRatio
@@ -183,8 +175,8 @@ print redRatio/irRatio
 ### we shall now plot them...
 plt.plot(t, redData, 'k--', t, irData, 'b--')
 plt.plot(t, redDataSmoothed, 'r', t, irDataSmoothed, 'g')
-plt.plot(t[redMaximas[0]], redData[redMaximas[0]], 'ko')
-plt.plot(t[redMinimas[0]], redData[redMinimas[0]], 'bo')
-plt.plot(t[irMaximas[0]], irData[irMaximas[0]], 'ko')
-plt.plot(t[irMinimas[0]], irData[irMinimas[0]], 'bo')
+plt.plot(t[redMaximas], redData[redMaximas], 'ko')
+plt.plot(t[redMinimas], redData[redMinimas], 'bo')
+plt.plot(t[irMaximas], irData[irMaximas], 'ko')
+plt.plot(t[irMinimas], irData[irMinimas], 'bo')
 plt.show()
