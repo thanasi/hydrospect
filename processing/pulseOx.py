@@ -4,7 +4,7 @@
 # In that meantime it shall be processed and the numbers (pulseOx and heart rate) shall be thrown out.
 
 ##### IMPORT STATEMENTS, VARIABLE DECLARATIONS..
-import serial, numpy, scipy.signal, time
+import serial, numpy, scipy.signal, time, math
 import matplotlib.pyplot as plt
 
 serialData = []
@@ -158,6 +158,27 @@ for k in range(0, len(irMaximas[0])-2):
 print "here's your pulse: "
 print averager/(len(irMaximas[0])-1)
   
+# step 7: find the logs of the ratios from the peaks.
+redRatioAverager = 0.0		# ratio of the AC and DC values
+### we start from 1 and not 0, because the first point is usually crap, so we'll ignore it.
+ranger = int(min(len(redMinimas), len(redMaximas)))
+for m in range(1, ranger):
+  redRatioAverager += float(redMaximas[0][m])/float(redMinimas[0][m])
+ 
+redRatio = redRatioAverager/float(ranger-2)
+
+irRatioAverager = 0.0		# ratio of AC and DC for IR
+ranger = int(min(len(irMinimas), len(irMaximas)))
+for n in range(1, ranger):
+  irRatioAverager += float(irMaximas[0][n])/float(irMinimas[0][n])
+
+irRatio = irRatioAverager/float(ranger-2)
+
+# step 8: find the o2 sat value yo. spit it out.
+print redRatio
+print irRatio
+print "THe pulseOx ratio..."
+print redRatio/irRatio
   
 ### we shall now plot them...
 plt.plot(t, redData, 'k--', t, irData, 'b--')
@@ -167,7 +188,3 @@ plt.plot(t[redMinimas[0]], redData[redMinimas[0]], 'bo')
 plt.plot(t[irMaximas[0]], irData[irMaximas[0]], 'ko')
 plt.plot(t[irMinimas[0]], irData[irMinimas[0]], 'bo')
 plt.show()
-
-# step 7: find the logs of the ratios from the peaks.
-
-# step 8: find the o2 sat value yo. spit it out.
