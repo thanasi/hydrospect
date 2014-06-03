@@ -5,11 +5,75 @@
 
 ##### IMPORT STATEMENTS, VARIABLE DECLARATIONS..
 import serial, numpy, scipy.signal, time
+import matplotlib.pyplot as plt
+
 serialData = []
 redData = []
 redMaximas = []
 irData = []
 irMaximas = []
+redMinimas = []
+irMinimas = []
+# the time axis, specified from before...
+t = numpy.arange(0,5,0.005)
+
+### function definitions...
+def smooth(x,window_len=11,window='hanning'):
+    """smooth the data using a window with requested size.
+    
+    This method is based on the convolution of a scaled window with the signal.
+    The signal is prepared by introducing reflected copies of the signal 
+    (with the window size) in both ends so that transient parts are minimized
+    in the begining and end part of the output signal.
+    
+    input:
+        x: the input signal 
+        window_len: the dimension of the smoothing window; should be an odd integer
+        window: the type of window from 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'
+            flat window will produce a moving average smoothing.
+
+    output:
+        the smoothed signal
+        
+    example:
+
+    t=linspace(-2,2,0.1)
+    x=sin(t)+randn(len(t))*0.1
+    y=smooth(x)
+    
+    see also: 
+    
+    numpy.hanning, numpy.hamming, numpy.bartlett, numpy.blackman, numpy.convolve
+    scipy.signal.lfilter
+ 
+    TODO: the window parameter could be the window itself if an array instead of a string
+    NOTE: length(output) != length(input), to correct this: return y[(window_len/2-1):-(window_len/2)] instead of just y.
+    """
+
+    if x.ndim != 1:
+        raise ValueError, "smooth only accepts 1 dimension arrays."
+
+    if x.size < window_len:
+        raise ValueError, "Input vector needs to be bigger than window size."
+
+
+    if window_len<3:
+        return x
+
+
+    if not window in ['flat', 'hanning', 'hamming', 'bartlett', 'blackman']:
+        raise ValueError, "Window is on of 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'"
+
+
+    s=numpy.r_[x[window_len-1:0:-1],x,x[-1:-window_len:-1]]
+    #print(len(s))
+    if window == 'flat': #moving average
+        w=numpy.ones(window_len,'d')
+    else:
+        w=eval('numpy.'+window+'(window_len)')
+
+    y=numpy.convolve(w/w.sum(),s,mode='valid')
+    return y
 
 # step1: open the serial port
 print("opening port..")
@@ -17,6 +81,7 @@ teensy = serial.Serial(3, 115200, timeout=1)		# open serial port, needs to be on
 
 # step 2: send the "begin the red colour" command...
 print("red led..")
+time.sleep(1)
 teensy.write('r')	# the red light's on and the data's being captured into a local variable on the teensy
 print ("collecting data from red led... please wait 5 seconds...")
 time.sleep(6)		# wait 6 seconds, let the data be collected for a 5 second interval and don't do anything till then
@@ -27,6 +92,7 @@ teensy.write('q')	# put the lights off
 # step 4: Send the "begin the IR colour" command...
 print("IR led")
 teensy.write('i')	# start IR light and acquisition
+time.sleep(1)
 print("collecting data from IR led, please wait...")
 time.sleep(6)
 
@@ -35,7 +101,7 @@ print("now will begin the transmission of data from arduino to python over seria
 teensy.write('t')
 for i in  range(0,1000):
   data = teensy.readline()
-  serialData.extend(data)
+  serialData.append(data)
   # print(str(i) + ": " + data)
 
 print("data collection done!")
@@ -43,9 +109,14 @@ teensy.close()
 
 ### then we go ahead and split the data at our leisure
 for j in range(0,1000):
-  z = serialData[i].split('\t')		# split data at tab
-  redData.extend(int(z[0]))			# append int version of the value into the datas list
-  irData.extend(int(z[1]))
+  z = ((serialData[j]).strip()).split('\t')		# split data at tab
+  # print(z)
+  red = int(z[0])
+  # print red
+  
+  ir = int(z[1])
+  redData.append(red)			# append int version of the value into the datas list
+  irData.append(ir)
 
 ### we then need to convert these lists to numpy arrays in order for them to be used by scipy
 redData = numpy.array(redData)
@@ -54,8 +125,32 @@ irData = numpy.array(irData)
 # step 6: PROCESSING begins. Find the peaks for both variables. Store into variable/array. Find the time difference between peaks, and store this into variables.
 # REMEMBER THAT THE DATA IS int COMING FROM THE ADC
 # also remember that argrelextrema returns the indices of the extremas, not the extremas themselves
-redMaximas = scipy.signal.argrelextrema(redData)
-irMaximas = scipy.signal.argrelextrema(irData)
+### finding the maximas...
+argrelOrder = 8				# set the order/window for maxima/minima peak finding
+redMaximas = scipy.signal.argrelmax(redData, order=argrelOrder)
+irMaximas = scipy.signal.argrelmax(irData, order=argrelOrder)
+
+### finding the minimas...
+redMinimas = scipy.signal.argrelmin(redData, order=argrelOrder)
+irMinimas = scipy.signal.argrelmin(irData, order=argrelOrder)
+
+### printing out the maximas and minimas to test...
+print redMinimas
+print redMaximas
+print irMinimas
+print irMaximas
+
+### we shall now plot them...
+plt.plot(t, redData, 'r', t, irData, 'g')
+plt.plot(t[redMaximas[0]], redData[redMaximas[0]], 'ko')
+plt.plot(t[redMinimas[0]], redData[redMinimas[0]], 'bo')
+plt.plot(t[irMaximas[0]], irData[irMaximas[0]], 'ko')
+plt.plot(t[irMinimas[0]], irData[irMinimas[0]], 'bo')
+plt.show()
+
+### will find the pulse now, as the test...
+for k in range(0, redMinimas.shape[0]-1):
+  print(redMinimas[k]-redMinimas[k+1])
 
 # step 7: find the logs of the ratios from the peaks.
 
