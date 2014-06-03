@@ -122,35 +122,45 @@ for j in range(0,1000):
 redData = numpy.array(redData)
 irData = numpy.array(irData)
 
+# we're also going to smooth these before making them numpy arrays.
+smoothWindow = 21		# make sure this is always an odd number
+plotCutoffs = int(smoothWindow/2)
+redDataSmoothed = smooth(numpy.array(redData), window_len=smoothWindow)[plotCutoffs:-plotCutoffs]
+irDataSmoothed = smooth(numpy.array(irData), window_len=smoothWindow)[plotCutoffs:-plotCutoffs]
+
 # step 6: PROCESSING begins. Find the peaks for both variables. Store into variable/array. Find the time difference between peaks, and store this into variables.
 # REMEMBER THAT THE DATA IS int COMING FROM THE ADC
 # also remember that argrelextrema returns the indices of the extremas, not the extremas themselves
 ### finding the maximas...
-argrelOrder = 8				# set the order/window for maxima/minima peak finding
-redMaximas = scipy.signal.argrelmax(redData, order=argrelOrder)
-irMaximas = scipy.signal.argrelmax(irData, order=argrelOrder)
+argrelOrder = 30				# set the order/window for maxima/minima peak finding
+redMaximas = scipy.signal.argrelmax(redDataSmoothed, order=argrelOrder)
+irMaximas = scipy.signal.argrelmax(irDataSmoothed, order=argrelOrder)
 
 ### finding the minimas...
-redMinimas = scipy.signal.argrelmin(redData, order=argrelOrder)
-irMinimas = scipy.signal.argrelmin(irData, order=argrelOrder)
+redMinimas = scipy.signal.argrelmin(redDataSmoothed, order=argrelOrder)
+irMinimas = scipy.signal.argrelmin(irDataSmoothed, order=argrelOrder)
 
 ### printing out the maximas and minimas to test...
+'''
 print redMinimas
 print redMaximas
 print irMinimas
 print irMaximas
+'''
 
+### will find the pulse now, as the test...
+print len(redMaximas)
+for k in range(0, len(redMaximas)-1):
+  print(redMinimas[k+1]-redMinimas[k])*0.005
+  
 ### we shall now plot them...
-plt.plot(t, redData, 'r', t, irData, 'g')
+plt.plot(t, redData, 'k--', t, irData, 'b--')
+plt.plot(t, redDataSmoothed, 'r', t, irDataSmoothed, 'g')
 plt.plot(t[redMaximas[0]], redData[redMaximas[0]], 'ko')
 plt.plot(t[redMinimas[0]], redData[redMinimas[0]], 'bo')
 plt.plot(t[irMaximas[0]], irData[irMaximas[0]], 'ko')
 plt.plot(t[irMinimas[0]], irData[irMinimas[0]], 'bo')
 plt.show()
-
-### will find the pulse now, as the test...
-for k in range(0, redMinimas.shape[0]-1):
-  print(redMinimas[k]-redMinimas[k+1])
 
 # step 7: find the logs of the ratios from the peaks.
 
