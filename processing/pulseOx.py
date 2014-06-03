@@ -149,13 +149,14 @@ print irMaximas
 '''
 
 ### will find the pulse now, as the test...
+# we'll use the IR to find pulse, as the heartbeat would be generally stable by then
 averager = 0
-for k in range(0, len(redMaximas[0])-2):
-  pulse = 60/((redMaximas[0][k+1]-redMaximas[0][k])*0.005)
+for k in range(0, len(irMaximas[0])-2):
+  pulse = 60/((irMaximas[0][k+1]-irMaximas[0][k])*0.005)
   averager += pulse
   
 print "here's your pulse: "
-print averager/len(redMaximas[0])
+print averager/(len(irMaximas[0])-1)
   
   
 ### we shall now plot them...
