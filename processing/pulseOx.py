@@ -4,8 +4,12 @@
 # In that meantime it shall be processed and the numbers (pulseOx and heart rate) shall be thrown out.
 
 ##### IMPORT STATEMENTS, VARIABLE DECLARATIONS..
-import serial, numpy, time
+import serial, numpy, scipy.signal, time
 serialData = []
+redData = []
+redMaximas = []
+irData = []
+irMaximas = []
 
 # step1: open the serial port
 print("opening port..")
@@ -32,12 +36,26 @@ teensy.write('t')
 for i in  range(0,1000):
   data = teensy.readline()
   serialData.extend(data)
-  print(str(i) + ": " + data)
+  # print(str(i) + ": " + data)
 
 print("data collection done!")
 teensy.close()
-# step 6: PROCESSING begins. Find the peaks for both variables. Store into variable/array. Find the time difference between peaks, and store this into variables.
 
+### then we go ahead and split the data at our leisure
+for j in range(0,1000):
+  z = serialData[i].split('\t')		# split data at tab
+  redData.extend(int(z[0]))			# append int version of the value into the datas list
+  irData.extend(int(z[1]))
+
+### we then need to convert these lists to numpy arrays in order for them to be used by scipy
+redData = numpy.array(redData)
+irData = numpy.array(irData)
+
+# step 6: PROCESSING begins. Find the peaks for both variables. Store into variable/array. Find the time difference between peaks, and store this into variables.
+# REMEMBER THAT THE DATA IS int COMING FROM THE ADC
+# also remember that argrelextrema returns the indices of the extremas, not the extremas themselves
+redMaximas = scipy.signal.argrelextrema(redData)
+irMaximas = scipy.signal.argrelextrema(irData)
 
 # step 7: find the logs of the ratios from the peaks.
 
