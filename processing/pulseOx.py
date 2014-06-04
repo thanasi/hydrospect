@@ -7,6 +7,7 @@
 import serial, numpy, scipy.signal, time, math
 import matplotlib.pyplot as plt
 
+scanTime = 20		# scanning time in seconds..
 serialData = []
 redData = []
 redMaximas = []
@@ -15,7 +16,7 @@ irMaximas = []
 redMinimas = []
 irMinimas = []
 # the time axis, specified from before...
-t = numpy.arange(0,5,0.005)
+t = numpy.arange(0,scanTime,0.005)
 
 ### function definitions...
 def smooth(x,window_len=11,window='hanning'):
@@ -83,8 +84,8 @@ teensy = serial.Serial(3, 115200, timeout=1)		# open serial port, needs to be on
 print("red led..")
 time.sleep(1)
 teensy.write('r')	# the red light's on and the data's being captured into a local variable on the teensy
-print ("collecting data from red led... please wait 5 seconds...")
-time.sleep(6)		# wait 6 seconds, let the data be collected for a 5 second interval and don't do anything till then
+print ("collecting data from red led... please wait...")
+time.sleep(scanTime+1)		# wait 6 seconds, let the data be collected for a 5 second interval and don't do anything till then
 	
 # step 3: after 5 seconds are up, put the lights off and disable the timer interrupt on the teensy
 teensy.write('q')	# put the lights off
@@ -94,12 +95,12 @@ print("IR led")
 teensy.write('i')	# start IR light and acquisition
 time.sleep(1)
 print("collecting data from IR led, please wait...")
-time.sleep(6)
+time.sleep(scanTime+1)
 
 # step 5: start acquiring data and storing it into a variable/array, then close serial port.
 print("now will begin the transmission of data from arduino to python over serial...")
 teensy.write('t')
-for i in  range(0,1000):
+for i in  range(0,scanTime*200):
   data = teensy.readline()
   serialData.append(data)
   # print(str(i) + ": " + data)
@@ -108,7 +109,7 @@ print("data collection done!")
 teensy.close()
 
 ### then we go ahead and split the data at our leisure
-for j in range(0,1000):
+for j in range(0,scanTime*200):
   z = ((serialData[j]).strip()).split('\t')		# split data at tab
   # print(z)
   red = int(z[0])
