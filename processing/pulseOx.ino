@@ -80,7 +80,7 @@ void loop(void) {
         Serial.print(redData[j]);
         Serial.print('\t');
         Serial.println(irData[j]);
-        delay(5);  // a small delay just to give python (which will be receiving the data) enough time to process
+        // delay(1);  // a small delay just to give python (which will be receiving the data) enough time to process
       }
     }
   }
