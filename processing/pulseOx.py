@@ -181,3 +181,15 @@ plt.plot(t[redMinimas], redData[redMinimas], 'bo')
 plt.plot(t[irMaximas], irData[irMaximas], 'ko')
 plt.plot(t[irMinimas], irData[irMinimas], 'bo')
 plt.show()
+
+# step 9: lastly, save the file as <yyyymmdd>-<i>.txt, where the 'i' will keep incrementing based on the previous files saved
+### we iterate over different names and integers, and make the last one work...
+import time, os
+
+count = 0
+while os.path.exists("%s-%s.txt" % (time.strftime("%Y%m%d"), count)):
+    count += 1
+fh = open("%s-%s.txt" % (time.strftime("%Y%m%d"), count), "w")
+
+for item in serialData:
+  print>>fh, item
